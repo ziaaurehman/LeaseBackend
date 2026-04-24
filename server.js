@@ -2,10 +2,11 @@ require('dotenv').config();
 require('express-async-errors');
 
 const chalk = require('chalk');
+// const cron = require('node-cron');
 const app = require('./src/app');
 const { connectDB } = require('./src/config/db');
 const { connectRedis } = require('./src/config/redis');
-
+// const { purgeExpiredDeletedUsers } = require('./src/services/user.service');
 
 const PORT = process.env.PORT || 7865;
 
@@ -17,6 +18,18 @@ const start = async () => {
   } else {
     console.log(chalk.yellow('⚠ Redis skipped     → REDIS_URL not set'));
   }
+
+  // // run daily at midnight — permanently delete users soft-deleted > 30 days ago
+  // cron.schedule('0 0 * * *', async () => {
+  //   try {
+  //     const count = await purgeExpiredDeletedUsers();
+  //     if (count > 0) {
+  //       console.log(chalk.dim(`[cron] Purged ${count} expired deleted user(s)`));
+  //     }
+  //   } catch (err) {
+  //     console.error(chalk.red('[cron] User purge failed:'), err.message);
+  //   }
+  // });
 
   app.listen(PORT, () => {
     console.log('');
